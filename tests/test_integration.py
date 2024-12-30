@@ -12,6 +12,10 @@ def test_scrape_and_notify(mock_anthropic, mock_twilio):
     # Load real config from .env
     config = load_config()
     
+    # Add max_articles verification
+    assert config.max_articles is not None, "MAX_ARTICLES not found in .env"
+    assert config.max_articles > 0, "MAX_ARTICLES must be greater than 0"
+    
     # Verify config loaded correctly
     assert config.llm_provider == "anthropic", "LLM_PROVIDER should be set to 'anthropic' in .env"
     assert config.llm_api_key is not None, "LLM_API_KEY not found in .env"
@@ -39,26 +43,23 @@ def test_scrape_and_notify(mock_anthropic, mock_twilio):
     
     # Get real articles from RSS feed
     articles = scraper.get_articles_for_topic("computer vision")
+    articles = articles[:config.max_articles]  # Take only max_articles
     assert len(articles) > 0, "No articles found in RSS feed"
     
-    # Take the first article
-    article = articles[0]
-    print(f"\nProcessing article: {article.title}")
+    # Generate summaries for all articles
+    for article in articles:
+        try:
+            article.summary = summarizer.summarize(article)
+            assert article.summary is not None
+            print(f"\nProcessing article: {article.title}")
+            print(f"Generated summary: {article.summary}")
+        except Exception as e:
+            pytest.fail(f"Failed to generate summary: {str(e)}")
     
-    # Generate summary using mocked Anthropic (but with real credentials)
+    # Send notification for all articles
     try:
-        article.summary = summarizer.summarize(article)
-        assert article.summary is not None
-        print(f"Generated summary: {article.summary}")
-    except Exception as e:
-        pytest.fail(f"Failed to generate summary: {str(e)}")
-    
-    # Send notification using mocked Twilio (but with real credentials)
-    try:
-        notifier.send_notifications([article])
-        # Get the formatted message that should have been sent
-        expected_message = notifier.format_message([article])[0]
-        # Verify Twilio was called with correct parameters
+        notifier.send_notifications(articles)
+        expected_message = notifier.format_message(articles)[0]
         mock_messages.create(
             from_=config.twilio_from_phone,
             to=config.twilio_to_phone,

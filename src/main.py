@@ -14,6 +14,7 @@ def scrape_summarize_notify():
 
     for topic in config.topics:
         articles = scraper.get_articles_for_topic(topic)
+        articles = articles[:config.max_articles // len(config.topics)]
         for article in articles:
             try:
                 article.summary = summarizer.summarize(article)

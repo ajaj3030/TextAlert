@@ -18,7 +18,8 @@ def test_summarize_openai(monkeypatch):
         twilio_from_phone="",
         twilio_to_phone="",
         topics=[],
-        schedule_times=[]
+        schedule_times=[],
+        max_articles=3  # Add this line
     )
     summarizer = Summarizer(config)
     article = Article(title="Test", url="", topic="", content="Test content")
@@ -41,7 +42,8 @@ def test_summarize_anthropic(mock_anthropic):
         twilio_from_phone="",
         twilio_to_phone="",
         topics=[],
-        schedule_times=[]
+        schedule_times=[],
+        max_articles=3  # Add this line
     )
     summarizer = Summarizer(config)
     article = Article(title="Test", url="", topic="", content="Test content")
