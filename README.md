@@ -18,7 +18,7 @@ An automated system that scrapes the latest AI research papers from various sour
 
 1. Clone the repository:
 
-git clone https://github.com/ajaj3030/TextAlert.git
+git clone https://github.com/ajaj3030/TextAlert.git \\
 cd TextAlert
 
 2. Create and activate a virtual environment:
