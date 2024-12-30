@@ -12,15 +12,43 @@ class NewsScraper:
         # For now, we'll use a simple dictionary to track seen URLs
         self.seen_urls = set()
         
-        # Map topics to RSS feeds (expand this based on needs)
+        # Comprehensive mapping of topics to their RSS feeds
         self.topic_feeds = {
             "computer vision": [
                 "https://arxiv.org/rss/cs.CV",
                 "https://medium.com/feed/tag/computer-vision"
             ],
-            "ai robotics": [
+            "robotics": [
                 "https://arxiv.org/rss/cs.RO",
                 "https://robotics.news/feed"
+            ],
+            "llms": [
+                "https://arxiv.org/rss/cs.CL",
+                "https://medium.com/feed/tag/large-language-models"
+            ],
+            "nlp": [
+                "https://arxiv.org/rss/cs.CL",
+                "https://medium.com/feed/tag/natural-language-processing"
+            ],
+            "ml": [
+                "https://arxiv.org/rss/cs.LG",
+                "https://medium.com/feed/tag/machine-learning"
+            ],
+            "blockchain": [
+                "https://arxiv.org/rss/cs.CR",
+                "https://medium.com/feed/tag/blockchain"
+            ],
+            "cryptocurrency": [
+                "https://medium.com/feed/tag/cryptocurrency",
+                "https://cointelegraph.com/rss"
+            ],
+            "computational finance": [
+                "https://arxiv.org/rss/q-fin.CP",
+                "https://medium.com/feed/tag/computational-finance"
+            ],
+            "reinforcement learning": [
+                "https://arxiv.org/rss/cs.LG",
+                "https://medium.com/feed/tag/reinforcement-learning"
             ]
         }
 
@@ -69,15 +97,27 @@ class NewsScraper:
                 # Parse the publication date
                 pub_date = None
                 if item.pubDate:
-                    try:
-                        pub_date = datetime.strptime(item.pubDate.text, '%a, %d %b %Y %H:%M:%S %z')
-                    except ValueError:
+                    date_formats = [
+                        '%a, %d %b %Y %H:%M:%S %z',  # Standard RSS format
+                        '%a, %d %b %Y %H:%M:%S GMT',
+                        '%Y-%m-%dT%H:%M:%S%z',       # ISO format
+                        '%Y-%m-%dT%H:%M:%SZ',        # ISO format without timezone
+                        '%a, %d %b %Y %H:%M:%S'      # Format without timezone
+                    ]
+                    
+                    for date_format in date_formats:
                         try:
-                            pub_date = datetime.strptime(item.pubDate.text, '%a, %d %b %Y %H:%M:%S GMT')
-                            pub_date = pub_date.replace(tzinfo=timezone.utc)
+                            pub_date = datetime.strptime(item.pubDate.text, date_format)
+                            if not pub_date.tzinfo:
+                                pub_date = pub_date.replace(tzinfo=timezone.utc)
+                            break
                         except ValueError:
-                            print(f"Could not parse date: {item.pubDate.text}")
                             continue
+                    
+                    if not pub_date:
+                        print(f"Warning: Could not parse date format: {item.pubDate.text} for article: {url}")
+                        # Use current time as fallback
+                        pub_date = datetime.now(timezone.utc)
                 
                 # Only include articles from the last 24 hours
                 if pub_date and (datetime.now(timezone.utc) - pub_date) > timedelta(days=1):
@@ -108,14 +148,19 @@ class NewsScraper:
         return articles
 
     def get_articles_for_topic(self, topic: str) -> List[Article]:
+        topic = topic.lower().strip()
+        if topic not in self.topic_feeds:
+            print(f"Warning: Topic '{topic}' not found in available topics. Available topics: {', '.join(self.topic_feeds.keys())}")
+            return []
+            
         articles = []
-        feeds = self.topic_feeds.get(topic.lower(), [])
+        feeds = self.topic_feeds[topic]
         
         for feed_url in feeds:
             try:
                 content = self.fetch_feed(feed_url)
                 articles.extend(self.parse_feed(content, topic))
-            except (NewsScraperError, Exception) as e:
+            except NewsScraperError as e:
                 print(f"Error processing feed {feed_url}: {str(e)}")
                 continue
                 

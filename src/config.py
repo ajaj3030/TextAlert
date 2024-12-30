@@ -18,6 +18,21 @@ class Config:
 def load_config() -> Config:
     load_dotenv()
     
+    # Get and validate topics
+    topics = [t.strip().lower() for t in os.getenv('TOPICS', '').split(',') if t.strip()]
+    valid_topics = [
+        "computer vision", "robotics", "llms", "nlp", "ml",
+        "blockchain", "cryptocurrency", "computational finance",
+        "reinforcement learning"
+    ]
+    
+    invalid_topics = [t for t in topics if t not in valid_topics]
+    if invalid_topics:
+        print(f"Warning: Invalid topics found: {', '.join(invalid_topics)}")
+        print(f"Available topics: {', '.join(valid_topics)}")
+        # Filter out invalid topics
+        topics = [t for t in topics if t in valid_topics]
+    
     return Config(
         llm_provider=os.getenv('LLM_PROVIDER', 'openai'),
         llm_api_key=os.getenv('LLM_API_KEY'),
@@ -25,7 +40,7 @@ def load_config() -> Config:
         twilio_auth_token=os.getenv('TWILIO_AUTH_TOKEN'),
         twilio_from_phone=os.getenv('TWILIO_FROM_PHONE'),
         twilio_to_phone=os.getenv('TWILIO_TO_PHONE'),
-        topics=os.getenv('TOPICS', '').split(','),
+        topics=topics,
         schedule_times=os.getenv('SCHEDULE_TIMES', '').split(','),
         max_articles=int(os.getenv('MAX_ARTICLES', '3'))
     ) 
