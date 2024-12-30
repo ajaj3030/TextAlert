@@ -1,0 +1,18 @@
+news-summarizer/
+├── .env.example
+├── .gitignore
+├── README.md
+├── requirements.txt
+├── src/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── scraper.py
+│   ├── summarizer.py
+│   ├── notifier.py
+│   ├── scheduler.py
+│   └── main.py
+└── tests/
+    ├── __init__.py
+    ├── test_scraper.py
+    ├── test_summarizer.py
+    └── test_notifier.py 
