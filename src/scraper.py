@@ -34,7 +34,7 @@ class NewsScraper:
 
     def parse_feed(self, content: str, topic: str) -> List[Article]:
         articles = []
-        soup = BeautifulSoup(content, 'xml')
+        soup = BeautifulSoup(content, 'lxml-xml')
         
         for item in soup.find_all('item'):
             url = item.link.text if item.link else None

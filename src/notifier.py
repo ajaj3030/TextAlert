@@ -10,7 +10,10 @@ class NotifierError(Exception):
 class SMSNotifier:
     def __init__(self, config: Config):
         self.config = config
-        self.client = Client(config.twilio_account_sid, config.twilio_auth_token)
+        self.client = Client(
+            config.twilio_account_sid,
+            config.twilio_auth_token
+        )
 
     def format_message(self, articles: List[Article]) -> List[str]:
         """Split articles into SMS-sized chunks."""
@@ -49,9 +52,9 @@ class SMSNotifier:
         for message in messages:
             try:
                 self.client.messages.create(
-                    body=message,
                     from_=self.config.twilio_from_phone,
-                    to=self.config.twilio_to_phone
+                    to=self.config.twilio_to_phone,
+                    body=message
                 )
             except TwilioRestException as e:
                 raise NotifierError(f"Failed to send SMS: {str(e)}") 

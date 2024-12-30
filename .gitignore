@@ -1,35 +1,26 @@
+# Environment variables
+.env
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 .Python
 env/
-build/
-develop-eggs/
+venv/
+.env/
+.venv/
+
+# Distribution / packaging
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
+build/
 *.egg-info/
-.installed.cfg
-*.egg
 
-# Environment variables
-.env
-
-# IDE
-.idea/
-.vscode/
-
-# Database
-*.db
-*.sqlite3
-
-# Logs
-*.log 
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover 
