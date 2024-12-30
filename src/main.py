@@ -13,8 +13,11 @@ def scrape_summarize_notify():
     all_articles = []
 
     for topic in config.topics:
+        # Get articles sorted by relevance
         articles = scraper.get_articles_for_topic(topic)
+        # Take top N most relevant articles
         articles = articles[:config.max_articles // len(config.topics)]
+        
         for article in articles:
             try:
                 article.summary = summarizer.summarize(article)

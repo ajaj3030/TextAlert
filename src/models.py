@@ -8,6 +8,6 @@ class Article:
     url: str
     topic: str
     content: str
-    published_date: Optional[datetime] = None
     summary: Optional[str] = None
-    is_sent: bool = False 
+    published_date: Optional[datetime] = None
+    relevance_score: float = 0.0  # Higher score means more relevant/trending 
