@@ -18,8 +18,8 @@ An automated system that scrapes the latest AI research papers from various sour
 
 1. Clone the repository:
 
-git clone https://github.com/yourusername/ai-research-summarizer.git
-cd ai-research-summarizer
+git clone https://github.com/ajaj3030/TextAlert.git
+cd TextAlert
 
 2. Create and activate a virtual environment:
 
@@ -120,8 +120,8 @@ pytest -v
    - Institution mentions (max 3 points)
 
 3. Summarization: Articles are summarized using either:
-   - OpenAI's GPT-3.5 (see src/summarizer.py, lines 26-44)
-   - Anthropic's Claude (see src/summarizer.py, lines 46-65)
+   - OpenAI's GPT-3.5 (I would change this to 4o) (see src/summarizer.py, lines 26-44)
+   - Anthropic's Claude Haiku (see src/summarizer.py, lines 46-65)
 
 4. Notification: Summaries are sent via SMS at scheduled times (see src/main.py, lines 7-31)
 
