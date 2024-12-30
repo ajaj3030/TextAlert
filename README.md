@@ -1,6 +1,6 @@
-# AI Research Paper Summarizer
+# Research News Text Updater
 
-An automated system that scrapes the latest AI research papers from various sources, ranks them by relevance, summarizes them using LLMs, and sends daily updates via SMS.
+An automated system that scrapes the latest research papers from various sources, ranks them by relevance, summarizes them using LLMs, and sends daily updates via SMS.
 
 ---
 
@@ -173,3 +173,7 @@ pytest -v
    - Check for sufficient credits.
    - Verify network connectivity.
 
+## Docker
+
+docker build -t ai-paper-summarizer .
+docker run --env-file .env ai-paper-summarizer
